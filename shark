@@ -1,0 +1,32 @@
+alias shark='source /Users/adrian/shark'
+
+##################################################
+#input needed:
+-path to release directory
+-name of your workon environment for amazon-aws in puppet-cloud
+##################################################
+
+
+##################################################
+#                                                #
+#   Usage:     pupit IP_Address                  #
+#                                                #
+##################################################
+
+pupit_function() {
+
+    pupit_command='The argument is:'
+    pupit_parameter=$1
+    echo $pupit_command$pupit_parameter
+
+    workon amazon-aws
+    cd /Users/adrian/code/puppet-cloud/mindtouch/amazon-aws/release_tasks
+    #url with command to run
+    fab puppet_apply:noop='n',host=$1
+    deactivate
+}
+
+alias pupit=pupit_function
+
+
+
