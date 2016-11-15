@@ -1,16 +1,9 @@
 ##################################################
 #input needed:
-#-path to release directory
-#-name of your workon environment for amazon-aws in puppet-cloud
+#-source ~/Projects/codetoolbox/update_puppet.sh
+#-update-puppet IP_ADDRESS [noop: y|n]
+#-update-puppet-master IP_ADDRESS [noop: y|n]
 ##################################################
-
-
-##################################################
-#                                                #
-#   Usage:     pupit IP_Address                  #
-#                                                #
-##################################################
-
 pupit_function() {
 
     workon_dir="puppet-cloud2-amazon-aws"
