@@ -1,3 +1,13 @@
+
+    #########################################
+    # Usage:                                #
+    #           sshc 54.165.181.103         #
+    #    or                                 #
+    #           sshc 54-165_181.103         #
+    #                                       #
+    #########################################
+
+
 ssh_cleaner() {
 
     argument_1=$1
@@ -20,6 +30,7 @@ ssh_cleaner() {
 
 
     echo "========================"
+    echo "==== ssh_cleaner() ====="
     echo "========================"
     echo "you gave: "$argument_1
     echo "you got: "$new_command
@@ -30,6 +41,7 @@ ssh_cleaner() {
     #execute command
     $new_command
 }
+
 
 
 alias sshc='ssh_cleaner'

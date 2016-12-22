@@ -28,44 +28,47 @@ ssh_repeater() {
     argument_list=`echo $argument_1 $argument_2 $argument_3 $argument_4`
 
     echo "========================"
+    echo "==== ssh_repeater() ===="
     echo "========================"
     echo "you gave: "$argument_1
-    echo "you got: "$argument_list
+    echo "you should get: "ssh $argument_list
     echo "========================"
     echo "========================"
 
 
-    #Original
+    ## Original Flow
     if [ -n "$(type -t ssh_cleaner)" ] && [ "$(type -t ssh_cleaner)" = function ];
         then echo Adrian\'s ssh_cleaner is a Function and it exists......so we will use it;
         while true;
-            do ssh_cleaner $argument_1;
+            do ssh_cleaner $argument_list;
             sleep 3;
+            echo
             echo 'Retrying.....';
+            echo
         done
     else
         echo Adrian\'s ssh_cleaner is NOT a Function or does not exist....skipping ssh_cleaner;
         while true;
-            do ssh $argument_1;
+            do ssh $argument_list;
             sleep 3;
+            echo
             echo 'Retrying.....';
+            echo
         done
-
     fi
 
 
-    ##Alternate flow
+    ## Alternate flow
     # while true;
     #     do
     #         if [ -n "$(type -t ssh_cleaner)" ] && [ "$(type -t ssh_cleaner)" = function ];
     #             then
     #             echo ssh_cleaner is a Function and it exists......so we will use it;
-    #             ssh_cleaner $argument_1;
+    #             ssh_cleaner $argument_list;
     #         else
     #             echo ssh_cleaner is NOT a Function or does not exist....skipping ss_cleaner;
-    #             ssh $argument_1;
+    #             ssh $argument_list;
     #         fi
-    #     done
     #     sleep 3;
     #     echo 'Retrying.....';
     # done
