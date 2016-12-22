@@ -25,24 +25,26 @@ ssh_repeater() {
         return
     fi
 
+    argument_list=`echo $argument_1 $argument_2 $argument_3 $argument_4`
 
     echo "========================"
     echo "========================"
     echo "you gave: "$argument_1
-    echo "you got: "$new_command
+    echo "you got: "$argument_list
     echo "========================"
     echo "========================"
 
 
+    #Original
     if [ -n "$(type -t ssh_cleaner)" ] && [ "$(type -t ssh_cleaner)" = function ];
-        then echo ssh_cleaner is a Function and it exists......so we will use it;
+        then echo Adrian\'s ssh_cleaner is a Function and it exists......so we will use it;
         while true;
             do ssh_cleaner $argument_1;
             sleep 3;
             echo 'Retrying.....';
         done
     else
-        echo ssh_cleaner is NOT a Function or does not exist....skipping ss_cleaner;
+        echo Adrian\'s ssh_cleaner is NOT a Function or does not exist....skipping ssh_cleaner;
         while true;
             do ssh $argument_1;
             sleep 3;
@@ -50,6 +52,24 @@ ssh_repeater() {
         done
 
     fi
+
+
+    ##Alternate flow
+    # while true;
+    #     do
+    #         if [ -n "$(type -t ssh_cleaner)" ] && [ "$(type -t ssh_cleaner)" = function ];
+    #             then
+    #             echo ssh_cleaner is a Function and it exists......so we will use it;
+    #             ssh_cleaner $argument_1;
+    #         else
+    #             echo ssh_cleaner is NOT a Function or does not exist....skipping ss_cleaner;
+    #             ssh $argument_1;
+    #         fi
+    #     done
+    #     sleep 3;
+    #     echo 'Retrying.....';
+    # done
+
 
 }
 
@@ -72,73 +92,6 @@ alias sshr='ssh_repeater'
 
 
 
-
-
-
-
-
-
-
-
-
-    #     while true;
-    #         do ssh_cleaner argument_1;
-
-
-    #         sleep 3;
-    #         echo 'Retrying.....';
-    #     done
-
-
-
-
-
-
-
-
-
-
-
-
-    # if [ -n "$(type -t ssh_cleaner)" ] && [ "$(type -t ssh_cleaner)" = function ];
-    #     then echo ssh_cleaner is a Function and it exists......so we will use it;
-    #     ssh_cleaner argument_1;
-    # else
-    #     echo ssh_cleaner is NOT a Function or does not exist....skipping ss_cleaner;
-    # fi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        while true;
-            do
-
-
-
-
-
-
-            sleep 3;
-            echo 'Retrying.....';
-        done
 
 
 
