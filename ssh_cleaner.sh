@@ -10,6 +10,7 @@ ssh_cleaner() {
     # source $HOME/.bash_profile
 
     if [[ -z $argument_1 ]]; then
+        echo
         echo "MISSING HOST/IP ADDRESS"
         echo
         return
