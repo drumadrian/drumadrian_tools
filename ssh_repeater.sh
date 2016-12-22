@@ -35,6 +35,7 @@ ssh_repeater() {
     echo "========================"
     echo "========================"
 
+    attempt=1
 
     ## Original Flow
     if [ -n "$(type -t ssh_cleaner)" ] && [ "$(type -t ssh_cleaner)" = function ];
@@ -42,7 +43,9 @@ ssh_repeater() {
         while true;
             do ssh_cleaner $argument_list;
             sleep 3;
+            let attempt++
             echo
+            echo 'Attempt: '$attempt;
             echo 'Retrying.....';
             echo
         done
@@ -51,7 +54,9 @@ ssh_repeater() {
         while true;
             do ssh $argument_list;
             sleep 3;
+            let attempt++
             echo
+            echo 'Attempt: '$attempt;
             echo 'Retrying.....';
             echo
         done
