@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: ''
+Metadata: {}
+Parameters:
+
+  Environment:
+    Description: 'Define environment name. (Example: dev, qa, stg, prod, mgmt)'
+    Type: String
+    Default: 'stg'
+    AllowedValues: 
+    - dev
+    - qa
+    - stg
+    - prod
+    - mgmt
+
+  paramName1:
+    Description: '-'
+    Type: String
+    Default: '-'
+  paramName2:
+    Description: '-'
+    Type: 'AWS::EC2::VPC::Id'
+    Default: '-'
+  paramName3:
+    Description: '-'
+    Type: 'AWS::EC2::Subnet::Id'
+    Default: '-'
+  paramName4:
+    Description: '-'
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    Default: '-'
+  paramName5:
+    Description: '-'
+    Type: 'AWS::EC2::SecurityGroup::Id'
+    Default: '-'
+  paramName6:
+    Description: '-'
+    Type: 'AWS::EC2::AvailabilityZone::Name'
+    Default: '-'
+  paramName7:
+    Description: '-'
+    Type: 'List<AWS::EC2::VPC::Id>'
+    Default: '-'
+  paramName8:
+    Description: '-'
+    Type: 'List<AWS::EC2::Image::Id>'
+    Default: '-'
+  paramName9:
+    Description: '-'
+    Type: 'List<AWS::EC2::SecurityGroup::GroupName>'
+    Default: '-'
+  paramName10:
+    Description: '-'
+    Type: 'AWS::EC2::Instance::Id'
+    Default: '-'
+  paramName11:
+    Description: '-'
+    Type: 'List<AWS::EC2::Volume::Id>'
+    Default: '-'
+
+
+
+Conditions: 
+  Create24301Listener: !Equals [ !Ref Environment, stg ]
+
+
+Resources:
+  secGroupName1:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: '-'
+      VpcId: !Ref paramName2
+
+  my24301ListenerThing:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: '-'
+      VpcId: !Ref paramName2
+
+
+
