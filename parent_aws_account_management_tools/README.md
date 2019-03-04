@@ -8,19 +8,15 @@ This project is intended to document the tools and cloudformation stacks used to
 
 ## Deployment Pipeline
 
-![alt text](https://raw.githubusercontent.com/drumadrian/Polly-Whitepapers/master/version_1/Polly_Papers_Deployment_Flow.png)
-
-https://cloudcraft.co/view/59c81b89-94fb-44d2-acb3-ee6bc6fba5f7?key=jZa62h-Y1JLI3aFQJORTtg&embed=true
+![alt text](https://raw.githubusercontent.com/drumadrian/drumadrian_tools/master/parent_aws_account_management_tools/AWS_Parent_Account_Management_Deployment_Flow.png)
 
 
-
-## Getting Started
+## Getting Started (to be updated)
 
 1. [Fork this repo](fork).
 2. Launch the Deployment Pipeline CloudFormation stack:
-    1. [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=polly-whitepapers-deployment-pipeline&templateURL=https://s3-us-west-2.amazonaws.com/adriandrummond.com/media/deployment_pipeline.yaml)
-    2. Enter the forked repo's owner in the `GitHubOwner` field.
-    3. Create a [New personal access token](https://github.com/settings/tokens/new) with `repo` and `admin:repo_hook` scopes, and enter the token in the `GitHubToken` field.
+    1. [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=aws-parent-account-management&templateURL=https://github.com/drumadrian/drumadrian_tools/tree/master/parent_aws_account_management_tools/deployment_pipeline/deployment_pipeline.yaml)
+    2. Enter all parameters details.
     4. Enter the name of an S3 bucket for storing pipeline artifacts in the `ArtifactBucket` field. ([Create a bucket](http://docs.aws.amazon.com/AmazonS3/latest/gsg/CreatingABucket.html) first if necessary.)
 3. Verify the newly-created stack and pipeline.
     1. Check the [CloudFormation Console](https://console.aws.amazon.com/cloudformation) to ensure your stack reaches the `CREATE_COMPLETE` state successfully.
@@ -40,15 +36,15 @@ That's it!
 
 
 
-## Create the Deployment Pipeline using AWS StudyGurus CLI: 
+## Create the Deployment Pipeline using Adrian DevOps CLI: 
 
 
 Setup
 
 ```
-chmod +x awsstudygurus
+chmod +x adriandevops
 export PATH=$PATH:./
-awsstudygurus --help
+adriandevops --help
 
 ```
 
@@ -56,7 +52,7 @@ Usage
 
 ```
 
-    USAGE: awsstudygurusawsstudygurus [OPTIONS] 
+    USAGE: adriandevops [OPTIONS] 
 
     OPTIONS
 
@@ -102,34 +98,9 @@ Usage
 
 
 
-### Create the Deployment Pipeline using Cloudformation (CLI): 
-
-```
-
-aws cloudformation deploy --template-file '/Users/adrian/Desktop/myhomeforcode/Polly-Whitepapers/deployment_pipeline/pollypapers_deployment_pipeline.yaml' \
-                          --stack-name 'Polly-Whitepapers-deployment-Pipeline' \
-                          --parameter-overrides \ 
-                          Email=adrian@adriandrummond.com \
-                          GitHubOwner=awsgurus \ 
-                          GitHubRepo=awsgurus 
-                          BranchName=master \ 
-                          GitHubToken=awsgurus \ 
-                          GitHubUrl=awsgurus \
-                          --capabilities CAPABILITY_NAMED_IAM \
-                          --no-fail-on-empty-changeset \
-                          --tags createdby=awsgurus project=Polly-Whitepapers
-
-```
 
 
-
-
-
-#### GitHub Repos with WhitePapers:
-
-- https://github.com/pravsingh/aws_whitepapers
-
-- https://github.com/StevenTTuD/aws-whitepaper-downloader
+#### Relevant Repos:
 
 - https://github.com/sunilake/AWSSolutionsReference
 
