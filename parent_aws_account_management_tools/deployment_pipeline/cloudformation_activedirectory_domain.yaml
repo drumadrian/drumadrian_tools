@@ -91,6 +91,7 @@ Resources:
     Type: 'AWS::DirectoryService::SimpleAD'
     Properties:
       Name: !Ref DomainDNSName
+      Size: Small
       ShortName: !Ref DomainNetBIOSName
       Password: !Ref DomainAdminPassword
       VpcSettings:
