@@ -64,11 +64,11 @@ Resources:
 
   DHCPOptions:
     Type: 'AWS::EC2::DHCPOptions'
-    DependsOn: MicrosoftAD
+    DependsOn: SimpleAD
     Properties:
       DomainName: !Ref DomainDNSName
       DomainNameServers: !GetAtt 
-        - MicrosoftAD
+        - SimpleAD
         - DnsIpAddresses
       Tags:
         - Key: Domain
@@ -87,8 +87,8 @@ Resources:
       DhcpOptionsId: !Ref DHCPOptions
 
 
-  MicrosoftAD:
-    Type: 'AWS::DirectoryService::MicrosoftAD'
+  SimpleAD:
+    Type: 'AWS::DirectoryService::SimpleAD'
     Properties:
       Name: !Ref DomainDNSName
       ShortName: !Ref DomainNetBIOSName
@@ -121,7 +121,7 @@ Outputs:
     Value: !Select 
       - '0'
       - !GetAtt 
-        - MicrosoftAD
+        - SimpleAD
         - DnsIpAddresses
     Description: >-
       AD Server 1 Private IP Address (this may vary based on Directory Service
@@ -131,7 +131,7 @@ Outputs:
     Value: !Select 
       - '1'
       - !GetAtt 
-        - MicrosoftAD
+        - SimpleAD
         - DnsIpAddresses
     Description: >-
       AD Server 2 Private IP Address (this may vary based on Directory Service
