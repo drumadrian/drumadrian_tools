@@ -396,6 +396,8 @@ Resources:
                 - 'ds:*'
                 - 'es:*'
                 - 'route53:*'
+                - 'cognito-identity:*'
+                - 'cognito-idp:*'
                 - 'cloud9:*'
                 Effect: Allow
                 Resource: '*'
