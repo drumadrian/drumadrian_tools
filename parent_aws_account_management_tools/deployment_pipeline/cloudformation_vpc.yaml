@@ -16,10 +16,21 @@ Parameters:
     Description: 'Provide a valid internal Domain Name for the crawler.'
     ConstraintDescription: 'Must provide valid internal Domain Name. ( Example: "pollywhitepapers.com" )'
     Type: String
-    Default: pollywhitepapers.com
+    Default: private.adrianws.com
 
+  ProvisionNATgateways:
+    Description: 'NAT Gateways are expensive for personal projects.  This is a feature to not create them'
+    ConstraintDescription: 'true or false'
+    Type: String
+    Default: false
+
+Conditions: 
+  ProvisionNATgateways: !Equals [ !Ref ProvisionNATgateways, true ]
 
 Resources:
+
+
+
 
   CustomVPC:
     Type: 'AWS::EC2::VPC'
@@ -35,8 +46,9 @@ Resources:
           Value: !Sub "${AWS::StackName}"
 
 
-
+############################################################
 #### Subnet: External
+############################################################
   SubnetExternalA:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -108,7 +120,9 @@ Resources:
 
 
 
+############################################################
 #### Subnet: Server
+############################################################
   SubnetServerA:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -132,6 +146,7 @@ Resources:
           Value: !Sub "${AWS::StackName}"
 
   RouteServerZoneAtoANYoverNATGWA:
+    Condition: ProvisionNATgateways
     Type: 'AWS::EC2::Route'
     Properties:
       RouteTableId:
@@ -162,6 +177,7 @@ Resources:
           Value: !Sub "${AWS::StackName}"
 
   RouteServerZoneBtoANYoverNATGWB:
+    Condition: ProvisionNATgateways
     Type: 'AWS::EC2::Route'
     Properties:
       RouteTableId:
@@ -226,6 +242,7 @@ Resources:
 
 
   NATGWZoneA:
+    Condition: ProvisionNATgateways
     Type: AWS::EC2::NatGateway
     Properties:
       AllocationId:
@@ -241,6 +258,7 @@ Resources:
           Value: !Sub "${AWS::StackName}"
   
   NATGWZoneB:
+    Condition: ProvisionNATgateways
     Type: AWS::EC2::NatGateway
     Properties:
       AllocationId:
@@ -256,11 +274,13 @@ Resources:
           Value: !Sub "${AWS::StackName}"
 
   EIPNATGWA:
+    Condition: ProvisionNATgateways
     Type: 'AWS::EC2::EIP'
     Properties:
       Domain: vpc
   
   EIPNATGWB:
+    Condition: ProvisionNATgateways
     Type: 'AWS::EC2::EIP'
     Properties:
       Domain: vpc

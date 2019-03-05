@@ -11,9 +11,10 @@
 ##################################
 # CONFIG VARIABLES
 ##################################
-PROJECT_NAME="pollypapers"			#must be lowercase to avoid breaking ECR reposotory name and etc.
+PROJECT_NAME="parent-account-control"			#must be lowercase to avoid breaking ECR reposotory name and etc.
 VERSION=0.0.1
 
+AWS_CLI_PROFILE="parent"
 SHORT_COMMIT_VERSION=$(git rev-parse --short HEAD)
 COMMIT_VERSION=$(git rev-parse HEAD)
 COMIMT_DESCRIPTION=$(git log -1 --pretty=%B)
@@ -21,10 +22,9 @@ COMMIT_BRANCH=`git branch | grep \* | cut -d ' ' -f2`
 DEPLOYMENT_PIPELINE_STACK_NAME="$PROJECT_NAME-deployment-pipeline-$COMMIT_BRANCH"
 REPOSITORY_NAME="$DEPLOYMENT_PIPELINE_STACK_NAME-repo"
 USER_NAME=$(whoami)
-AWS_ACCOUNT_NUMBER=$(aws sts get-caller-identity --output text --query 'Account')
+AWS_ACCOUNT_NUMBER=$(aws sts get-caller-identity --output text --query 'Account' --profile $AWS_CLI_PROFILE)
 ARTIFACT_DEPLOYMENT_BUCKET_NAME=$AWS_ACCOUNT_NUMBER-$DEPLOYMENT_PIPELINE_STACK_NAME 		
 REGION="us-west-2"
-AWS_CLI_PROFILE="default"
 EMAIL_ADDRESS="adrian.drummond@gmail.com"
 ECR_REPO_NAME="$PROJECT_NAME-deployment-pipeline-$COMMIT_BRANCH-ecr-repo"
 ECR_REGISTRY_ID=$(aws sts get-caller-identity --output text --query='Account' --profile dev)
@@ -96,6 +96,8 @@ deploy_pipeline()
 	####################################################################################################################################################################################################################################################################################################################################################
 
 	####################################################################################################################################################################################################################################################################################################################################################
+	echo ARTIFACT_DEPLOYMENT_BUCKET_NAME= 
+	echo $ARTIFACT_DEPLOYMENT_BUCKET_NAME
 	aws cloudformation deploy --stack-name $DEPLOYMENT_PIPELINE_STACK_NAME --template-file deployment_pipeline/deployment_pipeline.yaml --parameter-overrides Email=$EMAIL_ADDRESS RepositoryNameApp=$REPOSITORY_NAME ArtifactStoreBucketName=$ARTIFACT_DEPLOYMENT_BUCKET_NAME BranchName=$COMMIT_BRANCH IDName=$ID_NAME SecretName=$SECRET_NAME ECRRepositoryName=$ECR_REPO_NAME --capabilities CAPABILITY_NAMED_IAM --profile $AWS_CLI_PROFILE
 	####################################################################################################################################################################################################################################################################################################################################################
 
@@ -235,16 +237,24 @@ help()
 printvariables()
 {
 	printf "\n\n \n"
-	printf "PROJECT_NAME = $PROJECT_NAME \n"
-	printf "VERSION = $VERSION \n"
+	printf "AWS_CLI_PROFILE = $AWS_CLI_PROFILE \n"
 	printf "SHORT_COMMIT_VERSION = $SHORT_COMMIT_VERSION \n"
 	printf "COMMIT_VERSION = $COMMIT_VERSION \n"
 	printf "COMIMT_DESCRIPTION = $COMIMT_DESCRIPTION \n"
 	printf "COMMIT_BRANCH = $COMMIT_BRANCH \n"
-	printf "DEPLOYMENT_BUCKET_NAME = $DEPLOYMENT_BUCKET_NAME \n"
+	printf "DEPLOYMENT_PIPELINE_STACK_NAME = $DEPLOYMENT_PIPELINE_STACK_NAME \n"
+	printf "REPOSITORY_NAME = $REPOSITORY_NAME \n"
+	printf "USER_NAME = $USER_NAME \n"
+	printf "AWS_ACCOUNT_NUMBER = $AWS_ACCOUNT_NUMBER \n"
+	printf "ARTIFACT_DEPLOYMENT_BUCKET_NAME = $ARTIFACT_DEPLOYMENT_BUCKET_NAME \n"
 	printf "REGION = $REGION \n"
-	printf "AWS_CLI_PROFILE = $AWS_CLI_PROFILE \n"
 	printf "EMAIL_ADDRESS = $EMAIL_ADDRESS \n"
+	printf "ECR_REPO_NAME = $ECR_REPO_NAME \n"
+	printf "ECR_REGISTRY_ID = $ECR_REGISTRY_ID \n"
+	printf "ECR_IMAGE_TAG = $ECR_IMAGE_TAG \n"
+	printf "ECR_IMAGE_MANIFEST = $ECR_IMAGE_MANIFEST \n"
+	printf "ID_NAME = $ID_NAME \n"
+	printf "SECRET_NAME = $SECRET_NAME \n"
 	# printf "LOGFILE = $LOGFILE \n"
 	printf "Number of files in SEARCH PATH: $(ls -1 | wc -l)"
 	printf "\n\n\n"

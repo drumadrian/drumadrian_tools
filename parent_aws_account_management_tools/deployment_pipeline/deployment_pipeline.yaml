@@ -2,8 +2,8 @@ AWSTemplateFormatVersion: "2010-09-09"
 
 Description: >
   This template builds an AWS CodePipeline pipeline that implements a continuous delivery release
-  process. This is the build pipeline for the development of the Polly Papers system. 
-  Project site:       https://github.com/drumadrian/Polly-Whitepapers 
+  process. This is the build pipeline for the development of a Parent AWS Account management system. 
+  Project site:       
 
 Parameters: 
   Email:
@@ -40,25 +40,25 @@ Parameters:
     Type: String
     Default: "ecrrepository"
 
-  GitHubOwner:
-    Description: Owner of the GitHub repo
-    Type: String
-    Default: "awsgurus"
+  # GitHubOwner:
+  #   Description: Owner of the GitHub repo
+  #   Type: String
+  #   Default: "drumadrian"
 
-  GitHubRepo:
-    Description: The name of the GitHub repo
-    Type: String
-    Default: "awsgurus"
+  # GitHubRepo:
+  #   Description: The name of the GitHub repo
+  #   Type: String
+  #   Default: "drumadrian"
 
-  GitHubToken:
-    Description: The OAUTH token from GitHub
-    Type: String
-    Default: "awsgurus"
+  # GitHubToken:
+  #   Description: The OAUTH token from GitHub
+  #   Type: String
+  #   Default: "drumadrian"
 
-  GitHubUrl:
-    Description: The URL to the Git Repository
-    Type: String
-    Default: "awsgurus"
+  # GitHubUrl:
+  #   Description: The URL to the Git Repository
+  #   Type: String
+  #   Default: "drumadrian"
 
 
 Resources:
@@ -499,10 +499,9 @@ Resources:
               OutputArtifacts:
                 - Name: output-build-VPC
 
-
-        - Name: Build_Lambda_Functions
+        - Name: Launch_Active_Directory_and_Build_Elasticsearch
           Actions:
-            - Name: Build_Create_Audio
+            - Name: Launch_ActiveDirectory_Domain
               ActionTypeId:
                 Category: Build
                 Owner: AWS
@@ -511,13 +510,12 @@ Resources:
               InputArtifacts:
                 - Name: code
               Configuration:
-                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'create_audio'] ]
+                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'activedirectorydomain'] ]
               RunOrder: '1'
               OutputArtifacts:
-                - Name: output-Create_Audio
+                - Name: output-activedirectory
 
-
-            - Name: Build_Publish_Audio
+            - Name: Build_ElasticSearch
               ActionTypeId:
                 Category: Build
                 Owner: AWS
@@ -526,27 +524,45 @@ Resources:
               InputArtifacts:
                 - Name: code
               Configuration:
-                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'publish_audio'] ]
+                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'ElasticSearch'] ]
               RunOrder: '1'
               OutputArtifacts:
-                - Name: output-Deploy_Lambda_Functions
+                - Name: output_elasticsearch
 
 
-        - Name: Deploy_Fargate
-          Actions:
-            - Name: Fargate
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Provider: CodeBuild
-                Version: '1'
-              InputArtifacts:
-                - Name: code
-              Configuration:
-                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'deploy_fargate'] ]
-              RunOrder: '1'
-              OutputArtifacts:
-                - Name: output-deploy-fargate
+        # - Name: Build_Lambda_Functions
+        #   Actions:
+            # - Name: Build_Create_Audio
+            #   ActionTypeId:
+            #     Category: Build
+            #     Owner: AWS
+            #     Provider: CodeBuild
+            #     Version: '1'
+            #   InputArtifacts:
+            #     - Name: code
+            #   Configuration:
+            #     ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'create_audio'] ]
+            #   RunOrder: '1'
+            #   OutputArtifacts:
+            #     - Name: output-Create_Audio
+
+
+
+        # - Name: Deploy_Fargate
+        #   Actions:
+        #     - Name: Fargate
+        #       ActionTypeId:
+        #         Category: Build
+        #         Owner: AWS
+        #         Provider: CodeBuild
+        #         Version: '1'
+        #       InputArtifacts:
+        #         - Name: code
+        #       Configuration:
+        #         ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'deploy_fargate'] ]
+        #       RunOrder: '1'
+        #       OutputArtifacts:
+        #         - Name: output-deploy-fargate
 
 
         - Name: Start_Automated_Tests
@@ -564,39 +580,6 @@ Resources:
               RunOrder: '1'
               OutputArtifacts:
                 - Name: output-start-upload-test
-
-
-        - Name: Publish_Public_Artifacts
-          Actions:
-            - Name: Publish_Cloudformation_Template
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Provider: CodeBuild
-                Version: '1'
-              InputArtifacts:
-                - Name: code
-              Configuration:
-                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'publish_pipeline_template'] ]
-              RunOrder: '1'
-              OutputArtifacts:
-                - Name: output-publish-pipeline-template
-
-
-            - Name: Test_Published_Cloudformation_Template
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Provider: CodeBuild
-                Version: '1'
-              InputArtifacts:
-                - Name: code
-              Configuration:
-                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'test_published_template'] ]
-              RunOrder: '1'
-              OutputArtifacts:
-                - Name: output-test-published-template
-
 
 
 
@@ -701,12 +684,10 @@ Resources:
 
 
 
-
-
-  CodeBuildProjectCreateAudio:
+  CodeBuildProjectvpc:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Join [ -, [!Ref 'AWS::StackName', 'create_audio'] ]
+      Name: !Join [ -, [!Ref 'AWS::StackName', 'build-VPC'] ]
       ServiceRole: !Ref CodeBuildRole
       Artifacts:
         Type: CODEPIPELINE
@@ -741,19 +722,17 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: deployment_pipeline/buildspec_create_audio.yml
+        BuildSpec: deployment_pipeline/buildspec_vpc.yml
         GitCloneDepth: 0
         Type: CODEPIPELINE
-      TimeoutInMinutes: 17
+      TimeoutInMinutes: 10
 
 
 
-
-
-  CodeBuildProjectPublishAudio:
+  CodeBuildProjectLaunchActiveDirectory:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Join [ -, [!Ref 'AWS::StackName', 'publish_audio'] ]
+      Name: !Join [ -, [!Ref 'AWS::StackName', 'activedirectorydomain'] ]
       ServiceRole: !Ref CodeBuildRole
       Artifacts:
         Type: CODEPIPELINE
@@ -788,21 +767,16 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: deployment_pipeline/buildspec_publish_audio.yml
+        BuildSpec: deployment_pipeline/buildspec_activedirectory_domain.yml
         GitCloneDepth: 0
         Type: CODEPIPELINE
-      TimeoutInMinutes: 17
+      TimeoutInMinutes: 25
 
 
-
-
-
-
-
-  CodeBuildProjectDeployFargate:
+  CodeBuildProjectElasticSearch:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Join [ -, [!Ref 'AWS::StackName', 'deploy_fargate'] ]
+      Name: !Join [ -, [!Ref 'AWS::StackName', 'ElasticSearch'] ]
       ServiceRole: !Ref CodeBuildRole
       Artifacts:
         Type: CODEPIPELINE
@@ -837,10 +811,98 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: deployment_pipeline/buildspec_deploy_fargate.yml
+        BuildSpec: buildspec_elasticsearch.yml
         GitCloneDepth: 0
         Type: CODEPIPELINE
-      TimeoutInMinutes: 17
+      TimeoutInMinutes: 20
+
+
+  CodeBuildProjectCognito:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Join [ -, [!Ref 'AWS::StackName', 'Cognito'] ]
+      ServiceRole: !Ref CodeBuildRole
+      Artifacts:
+        Type: CODEPIPELINE
+      BadgeEnabled: false
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/python:3.6.5
+        EnvironmentVariables:
+          - Name: codecommithttpsname
+            Value: !GetAtt coderepo.Name
+            Type: PLAINTEXT
+          - Name: codecommithttpsurl
+            Value: !GetAtt coderepo.CloneUrlHttp
+            Type: PLAINTEXT
+          - Name: codecommithttpsurlSSM
+            Value: !Sub "${AWS::StackName}-coderepoURL"
+            Type: PARAMETER_STORE
+          - Name: codepipelinesnstopicarn
+            Value: !Ref CodePipelineSNSTopic
+            Type: PLAINTEXT
+          - Name: codepipelinebranchname
+            Value: !Ref BranchName
+            Type: PLAINTEXT
+          - Name: idname
+            Value: !Ref IDName
+            Type: PARAMETER_STORE
+          - Name: secretidname
+            Value: !Ref SecretName
+            Type: PARAMETER_STORE
+          - Name: deploymentartifactstorebucketname
+            Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
+            Type: PLAINTEXT
+      Source:
+        BuildSpec: buildspec_cognito.yml
+        GitCloneDepth: 0
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 20
+
+
+  # CodeBuildProjectCreateAudio:
+  #   Type: AWS::CodeBuild::Project
+  #   Properties:
+  #     Name: !Join [ -, [!Ref 'AWS::StackName', 'create_audio'] ]
+  #     ServiceRole: !Ref CodeBuildRole
+  #     Artifacts:
+  #       Type: CODEPIPELINE
+  #     BadgeEnabled: false
+  #     Environment:
+  #       Type: LINUX_CONTAINER
+  #       ComputeType: BUILD_GENERAL1_SMALL
+  #       Image: aws/codebuild/python:3.6.5
+  #       EnvironmentVariables:
+  #         - Name: codecommithttpsname
+  #           Value: !GetAtt coderepo.Name
+  #           Type: PLAINTEXT
+  #         - Name: codecommithttpsurl
+  #           Value: !GetAtt coderepo.CloneUrlHttp
+  #           Type: PLAINTEXT
+  #         - Name: codecommithttpsurlSSM
+  #           Value: !Sub "${AWS::StackName}-coderepoURL"
+  #           Type: PARAMETER_STORE
+  #         - Name: codepipelinesnstopicarn
+  #           Value: !Ref CodePipelineSNSTopic
+  #           Type: PLAINTEXT
+  #         - Name: codepipelinebranchname
+  #           Value: !Ref BranchName
+  #           Type: PLAINTEXT
+  #         - Name: idname
+  #           Value: !Ref IDName
+  #           Type: PARAMETER_STORE
+  #         - Name: secretidname
+  #           Value: !Ref SecretName
+  #           Type: PARAMETER_STORE
+  #         - Name: deploymentartifactstorebucketname
+  #           Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
+  #           Type: PLAINTEXT
+  #     Source:
+  #       BuildSpec: deployment_pipeline/buildspec_create_audio.yml
+  #       GitCloneDepth: 0
+  #       Type: CODEPIPELINE
+  #     TimeoutInMinutes: 17
 
 
 
@@ -850,7 +912,7 @@ Resources:
 
 
 
-  CodeBuildProjectStartAutomatedTests:
+  CodeBuildProjectAutomatedTests:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Join [ -, [!Ref 'AWS::StackName', 'start_automated_tests'] ]
@@ -898,96 +960,8 @@ Resources:
 
 
 
-  CodeBuildProjectPublishTemplate:
-    Type: AWS::CodeBuild::Project
-    Properties:
-      Name: !Join [ -, [!Ref 'AWS::StackName', 'publish_pipeline_template'] ]
-      ServiceRole: !Ref CodeBuildRole
-      Artifacts:
-        Type: CODEPIPELINE
-      BadgeEnabled: false
-      Environment:
-        Type: LINUX_CONTAINER
-        ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/python:3.6.5
-        EnvironmentVariables:
-          - Name: codecommithttpsname
-            Value: !GetAtt coderepo.Name
-            Type: PLAINTEXT
-          - Name: codecommithttpsurl
-            Value: !GetAtt coderepo.CloneUrlHttp
-            Type: PLAINTEXT
-          - Name: codecommithttpsurlSSM
-            Value: !Sub "${AWS::StackName}-coderepoURL"
-            Type: PARAMETER_STORE
-          - Name: codepipelinesnstopicarn
-            Value: !Ref CodePipelineSNSTopic
-            Type: PLAINTEXT
-          - Name: codepipelinebranchname
-            Value: !Ref BranchName
-            Type: PLAINTEXT
-          - Name: idname
-            Value: !Ref IDName
-            Type: PARAMETER_STORE
-          - Name: secretidname
-            Value: !Ref SecretName
-            Type: PARAMETER_STORE
-          - Name: deploymentartifactstorebucketname
-            Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
-            Type: PLAINTEXT
-      Source:
-        BuildSpec: deployment_pipeline/buildspec_publish_pipeline_template.yml
-        GitCloneDepth: 0
-        Type: CODEPIPELINE
-      TimeoutInMinutes: 17
 
 
-
-
-
-
-  CodeBuildProjectTestPublishedTemplate:
-    Type: AWS::CodeBuild::Project
-    Properties:
-      Name: !Join [ -, [!Ref 'AWS::StackName', 'test_published_template'] ]
-      ServiceRole: !Ref CodeBuildRole
-      Artifacts:
-        Type: CODEPIPELINE
-      BadgeEnabled: false
-      Environment:
-        Type: LINUX_CONTAINER
-        ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/python:3.6.5
-        EnvironmentVariables:
-          - Name: codecommithttpsname
-            Value: !GetAtt coderepo.Name
-            Type: PLAINTEXT
-          - Name: codecommithttpsurl
-            Value: !GetAtt coderepo.CloneUrlHttp
-            Type: PLAINTEXT
-          - Name: codecommithttpsurlSSM
-            Value: !Sub "${AWS::StackName}-coderepoURL"
-            Type: PARAMETER_STORE
-          - Name: codepipelinesnstopicarn
-            Value: !Ref CodePipelineSNSTopic
-            Type: PLAINTEXT
-          - Name: codepipelinebranchname
-            Value: !Ref BranchName
-            Type: PLAINTEXT
-          - Name: idname
-            Value: !Ref IDName
-            Type: PARAMETER_STORE
-          - Name: secretidname
-            Value: !Ref SecretName
-            Type: PARAMETER_STORE
-          - Name: deploymentartifactstorebucketname
-            Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
-            Type: PLAINTEXT
-      Source:
-        BuildSpec: deployment_pipeline/buildspec_test_published_template.yml
-        GitCloneDepth: 0
-        Type: CODEPIPELINE
-      TimeoutInMinutes: 17
 
 
 

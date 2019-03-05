@@ -1,0 +1,147 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  This template creates a managed Microsoft AD Directory Service into private
+  subnets in separate Availability Zones inside a VPC. The default Domain
+  Administrator user is 'admin'. For adding members to the domain, ensure that
+  they are launched into the domain member security group created by this
+  template and then configure them to use the AD instances fixed private IP
+  addresses as the DNS server. **WARNING** This template creates Amazon EC2
+  Windows instance and related resources. You will be billed for the AWS
+  resources used if you create a stack from this template. 
+
+
+Parameters:
+
+  DomainAdminPassword:
+    Description: >-
+      Password for the domain admin user. Must be at least 8 characters
+      containing letters, numbers and symbols
+    Type: String
+    MinLength: '8'
+    MaxLength: '32'
+    AllowedPattern: >-
+      (?=^.{6,255}$)((?=.*\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*
+    NoEcho: 'true'
+
+  DomainDNSName:
+    Description: >-
+      Fully qualified domain name (FQDN) of the forest root domain e.g.
+      example.com
+    Type: String
+    Default: example.com
+    MinLength: '2'
+    MaxLength: '25'
+    AllowedPattern: '[a-zA-Z0-9\-]+\..+'
+
+  DomainNetBIOSName:
+    Description: >-
+      NetBIOS name of the domain (upto 15 characters) for users of earlier
+      versions of Windows e.g. EXAMPLE
+    Type: String
+    Default: example
+    MinLength: '1'
+    MaxLength: '15'
+    AllowedPattern: '[a-zA-Z0-9\-]+'
+  PipelineName:
+    Description: The name of the deployment pipeline for this the stack of the app
+    Type: String
+
+Rules:
+  SubnetsInVPC:
+    Assertions:
+      - Assert:
+          'Fn::EachMemberIn':
+            - 'Fn::ValueOfAll':
+                - 'AWS::EC2::Subnet::Id'
+                - VpcId
+            - 'Fn::RefAll': 'AWS::EC2::VPC::Id'
+        AssertDescription: All subnets must in the VPC
+
+
+
+Resources:
+
+
+  DHCPOptions:
+    Type: 'AWS::EC2::DHCPOptions'
+    DependsOn: MicrosoftAD
+    Properties:
+      DomainName: !Ref DomainDNSName
+      DomainNameServers: !GetAtt 
+        - MicrosoftAD
+        - DnsIpAddresses
+      Tags:
+        - Key: Domain
+          Value: !Ref DomainDNSName
+
+
+  VPCDHCPOptionsAssociation:
+    Type: 'AWS::EC2::VPCDHCPOptionsAssociation'
+    Properties:
+      VpcId: !ImportValue 
+        'Fn::Join':
+          - ''
+          - - !Ref PipelineName
+            - '-vpc-'
+            - VPCID
+      DhcpOptionsId: !Ref DHCPOptions
+
+
+  MicrosoftAD:
+    Type: 'AWS::DirectoryService::MicrosoftAD'
+    Properties:
+      Name: !Ref DomainDNSName
+      ShortName: !Ref DomainNetBIOSName
+      Password: !Ref DomainAdminPassword
+      VpcSettings:
+        SubnetIds:
+          - !ImportValue 
+            'Fn::Join':
+              - ''
+              - - !Ref PipelineName
+                - '-vpc-'
+                - SubnetServerA
+          - !ImportValue 
+            'Fn::Join':
+              - ''
+              - - !Ref PipelineName
+                - '-vpc-'
+                - SubnetServerB
+        VpcId: !ImportValue 
+          'Fn::Join':
+            - ''
+            - - !Ref PipelineName
+              - '-vpc-'
+              - VPCID
+
+
+Outputs:
+
+  ADServer1PrivateIP:
+    Value: !Select 
+      - '0'
+      - !GetAtt 
+        - MicrosoftAD
+        - DnsIpAddresses
+    Description: >-
+      AD Server 1 Private IP Address (this may vary based on Directory Service
+      order of IP addresses)
+
+  ADServer2PrivateIP:
+    Value: !Select 
+      - '1'
+      - !GetAtt 
+        - MicrosoftAD
+        - DnsIpAddresses
+    Description: >-
+      AD Server 2 Private IP Address (this may vary based on Directory Service
+      order of IP addresses)
+
+  DomainAdmin:
+    Value: !Join 
+      - ''
+      - - !Ref DomainNetBIOSName
+        - \admin
+    Description: Domain administrator account
+
+
