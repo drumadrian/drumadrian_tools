@@ -530,6 +530,21 @@ Resources:
                 - Name: output_elasticsearch
 
 
+            - Name: Create_Cognito
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              InputArtifacts:
+                - Name: code
+              Configuration:
+                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'Cognito'] ]
+              RunOrder: '1'
+              OutputArtifacts:
+                - Name: output_cognito
+
+
         # - Name: Build_Lambda_Functions
         #   Actions:
             # - Name: Build_Create_Audio
