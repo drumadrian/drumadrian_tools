@@ -52,9 +52,8 @@ phases:
 
   build:
     commands:
+      - cd parent_aws_account_management_tools/deployment_pipeline
       - aws cloudformation deploy --stack-name $CODEBUILD_INITIATOR_NAME-elasticsearch --template-file cloudformation_elasticsearch.yaml --parameter-overrides CIDRRangePrefix=10.250 PipelineName=$CODEBUILD_INITIATOR_NAME GitHTTPSURL=$CODECOMMITREPOHTTPSURL --capabilities CAPABILITY_IAM --tags createdby=Adrian --no-fail-on-empty-changeset --debug
-      - aws ec2 describe-vpcs
-      - aws s3 ls
       # - command
 
   post_build:
