@@ -330,6 +330,15 @@ Resources:
           Value: !Sub "${AWS::StackName}"
 
 
+  ClientVPNSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Client VPN Security Group
+      VpcId: !Ref CustomVPC
+      Tags:
+        - Key: Name
+          Value: Client VPN Security Group
+
 
 Outputs:
 
