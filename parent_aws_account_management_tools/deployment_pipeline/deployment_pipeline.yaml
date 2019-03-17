@@ -503,19 +503,19 @@ Resources:
 
         - Name: Launch_Active_Directory_and_Build_Elasticsearch
           Actions:
-            - Name: Launch_ActiveDirectory_Domain
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Provider: CodeBuild
-                Version: '1'
-              InputArtifacts:
-                - Name: code
-              Configuration:
-                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'activedirectorydomain'] ]
-              RunOrder: '1'
-              OutputArtifacts:
-                - Name: output-activedirectory
+            # - Name: Launch_ActiveDirectory_Domain
+            #   ActionTypeId:
+            #     Category: Build
+            #     Owner: AWS
+            #     Provider: CodeBuild
+            #     Version: '1'
+            #   InputArtifacts:
+            #     - Name: code
+            #   Configuration:
+            #     ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'activedirectorydomain'] ]
+            #   RunOrder: '1'
+            #   OutputArtifacts:
+            #     - Name: output-activedirectory
 
             - Name: Build_ElasticSearch
               ActionTypeId:
