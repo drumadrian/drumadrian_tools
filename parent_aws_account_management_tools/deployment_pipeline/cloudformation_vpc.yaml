@@ -306,11 +306,11 @@ Resources:
       NetworkAclId: !Ref NetworkACL
 
 
-  DHCPAssoc1:
-    Type: 'AWS::EC2::VPCDHCPOptionsAssociation'
-    Properties:
-      VpcId: !Ref CustomVPC
-      DhcpOptionsId: !Ref DHCPOptions
+  # DHCPAssoc1:
+  #   Type: 'AWS::EC2::VPCDHCPOptionsAssociation'
+  #   Properties:
+  #     VpcId: !Ref CustomVPC
+  #     DhcpOptionsId: !Ref DHCPOptions
 
 
 
