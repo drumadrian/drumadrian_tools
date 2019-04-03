@@ -664,7 +664,7 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: parent_aws_account_management_tools/deployment_pipeline/buildspec_buildvpc.yaml
+        BuildSpec: deployment_pipeline/buildspec_buildvpc.yaml
         GitCloneDepth: 0
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -713,7 +713,7 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: parent_aws_account_management_tools/deployment_pipeline/buildspec_createdatabase.yaml
+        BuildSpec: deployment_pipeline/buildspec_createdatabase.yaml
         GitCloneDepth: 0
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -761,7 +761,7 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: parent_aws_account_management_tools/deployment_pipeline/buildspec_creates3buckets.yaml
+        BuildSpec: deployment_pipeline/buildspec_creates3buckets.yaml
         GitCloneDepth: 0
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -808,7 +808,7 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: parent_aws_account_management_tools/deployment_pipeline/buildspec_createcognitopool.yaml
+        BuildSpec: deployment_pipeline/buildspec_createcognitopool.yaml
         GitCloneDepth: 0
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -855,7 +855,7 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: parent_aws_account_management_tools/deployment_pipeline/buildspec_createloadbalancer.yaml
+        BuildSpec: deployment_pipeline/buildspec_createloadbalancer.yaml
         GitCloneDepth: 0
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -902,7 +902,7 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: parent_aws_account_management_tools/deployment_pipeline/buildspec_buildlambdas.yaml
+        BuildSpec: deployment_pipeline/buildspec_buildlambdas.yaml
         GitCloneDepth: 0
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -949,7 +949,7 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: parent_aws_account_management_tools/deployment_pipeline/buildspec_createtranscoder.yaml
+        BuildSpec: deployment_pipeline/buildspec_createtranscoder.yaml
         GitCloneDepth: 0
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
