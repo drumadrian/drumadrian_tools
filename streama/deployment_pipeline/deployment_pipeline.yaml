@@ -618,7 +618,7 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: parent_aws_account_management_tools/deployment_pipeline/buildspec_createamipipeline.yaml
+        BuildSpec: deployment_pipeline/buildspec_createamipipeline.yaml
         GitCloneDepth: 0
         Type: CODEPIPELINE
       TimeoutInMinutes: 30
